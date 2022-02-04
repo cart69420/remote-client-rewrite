@@ -9,6 +9,8 @@ class Command extends Settings {
 
     getName() { return this.name; }
     getDescription() { return this.description; }
+
+    get bot() { return process.bot; }
 }
 
 module.exports = Command;

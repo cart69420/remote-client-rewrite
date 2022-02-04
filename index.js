@@ -1,23 +1,49 @@
 const mineflayer = require("mineflayer")
 const Settings = require("./settings/Settings")
 
-//const bot = mineflayer.createBot({
-//    host: process.argv[2] || "localhost",
-//    port: process.argv[3] || 25565,
-//    username: process.argv[4] || "remoteclient",
-//    version: process.argv[5] || false,
-//})
+var create = (async() => {
+process.bot = await mineflayer.createBot({
+    host: process.argv[2] || "localhost",
+    port: process.argv[3] || 25565,
+    username: process.argv[4] || "remoteclient",
+    version: process.argv[5] || false,
+})
 
 const modules = new Map();
 const commands = new Map();
 
 const examplemodule = require("./modules/Example")
 const examplecommand = require("./commands/Example");
+const tpcommand = require("./commands/follow");
 
 modules.set("example", new examplemodule());
-commands.set("example", new examplecommand());
+commands.set("clip", new examplecommand());
+commands.set('follow', new tpcommand());
 
-console.log(modules.get('example'))
-console.log(commands.get('example'))
-modules.get('example').onEnable()
-commands.get('example').onExecute(['test', 'owow'])
+process.bot.on("chat", (username, message) => {
+    message = message.toLowerCase();
+    if (message.startsWith("toggle")) {
+        modules.get(message.split(" ")[1]).setToggled(!modules.get(message.split(" ")[1]).getState());
+        process.bot.chat(message.split(" ")[1] + " has been " + (modules.get(message.split(" ")[1]).getState() ? "enabled" : "disabled"));
+    } else {
+        for (let [key, value] of commands) {
+            if (message.startsWith(key)) {
+                value.onExecute(message.split(" ").slice(1));
+            }
+        }
+    }
+})
+
+process.bot.on("physicTick", () => {
+    modules.forEach((module) => {
+        if (module.getState()) module.onTick();
+    })
+})
+
+process.bot.on("moduleToggled", (module) => {
+    console.log(module.getName() + ": " + module.getState());
+    if (module.getState()) module.onEnable();
+    else module.onDisable();
+})
+
+})()
