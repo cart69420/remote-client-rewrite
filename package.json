@@ -1,0 +1,14 @@
+{
+  "name": "remote-client-rewrite",
+  "version": "1.0.0",
+  "description": "a full rewrite",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "cart",
+  "license": "ISC",
+  "dependencies": {
+    "mineflayer": "^3.15.0"
+  }
+}
