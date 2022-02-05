@@ -4,10 +4,23 @@ class ExampleModule extends Module {
     constructor() {
         super("Example", "An example module", "Example");
         this.addSetting(new this.BooleanSetting("ExampleSetting", "Example setting", true));
+        this.tick = 0;
     }
 
     onEnable() {
-        console.log(this["ExampleSetting"].getValue());
+
+    }
+    
+    onTick() {
+        this.tick++;
+        if (this.tick % 20 == 0) {
+            this.bot.setControlState("jump", true);
+            this.bot.setControlState("jump", false);
+        }
+    }
+
+    onDisable() {
+        this.tick = 0;
     }
 }
 

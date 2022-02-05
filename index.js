@@ -1,5 +1,9 @@
+if (process.argv.length < 6 || process.argv.length > 6) {
+    console.log('Usage: node index.js <ip> <port> <bot_name> <version>');
+    process.exit(1);
+}
+
 const mineflayer = require("mineflayer")
-const Settings = require("./settings/Settings")
 
 var create = (async() => {
 process.bot = await mineflayer.createBot({
