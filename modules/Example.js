@@ -7,15 +7,12 @@ class ExampleModule extends Module {
         this.tick = 0;
     }
 
-    onEnable() {
-
-    }
+    onEnable() {}
     
     onTick() {
         this.tick++;
         if (this.tick % 20 == 0) {
-            this.bot.setControlState("jump", true);
-            this.bot.setControlState("jump", false);
+            this.bot.chat("1 second has passed");
         }
     }
 

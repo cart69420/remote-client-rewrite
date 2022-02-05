@@ -18,11 +18,11 @@ const commands = new Map();
 
 const examplemodule = require("./modules/Example")
 const examplecommand = require("./commands/Example");
-const tpcommand = require("./commands/follow");
+const followcommand = require("./commands/follow");
 
-modules.set("example", new examplemodule());
+modules.set("tick", new examplemodule());
 commands.set("clip", new examplecommand());
-commands.set('follow', new tpcommand());
+commands.set('follow', new followcommand());
 
 process.bot.on("chat", (username, message) => {
     message = message.toLowerCase();
@@ -38,9 +38,43 @@ process.bot.on("chat", (username, message) => {
     }
 })
 
+var ticks = 0;
 process.bot.on("physicTick", () => {
+    process.bot.ticksExisted = ticks++;
     modules.forEach((module) => {
-        if (module.getState()) module.onTick();
+        if (module.getState() && typeof module.onTick == "function") module.onTick();
+    })
+})
+
+process.bot.on("respawn", () => {
+    modules.forEach((module) => {
+        if (module.getState() && typeof module.onWorld == "function") module.onWorld();
+    })
+})
+
+process.bot.on("kicked", (reason) => {
+    modules.forEach((module) => {
+        if (module.getState() && typeof module.onKick == "function") module.onKick();
+    })
+})
+
+process.bot.on("death", () => {
+    modules.forEach((module) => {
+        if (module.getState() && typeof module.onDeath == "function") module.onDeath();
+    })
+})
+
+process.bot.on("move", () => {
+    modules.forEach((module) => {
+        let last_pos = process.bot.entity.position.minus(process.bot.entity.velocity)
+        if (module.getState() && typeof module.onMove == "function") module.onMove(last_pos);
+    })
+})
+
+process.bot._client.on("packet", (packet, metadata) => {
+    // might wanna read the docs before using this one
+    modules.forEach((module) => {
+        if (module.getState() && typeof module.onPacket == "function") module.onPacket(packet, metadata);
     })
 })
 
